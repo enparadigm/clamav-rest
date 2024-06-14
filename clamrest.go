@@ -206,7 +206,7 @@ func waitForClamD(port string, times int) {
 	version, err := clamdTest.Version()
 
 	if err != nil {
-		if times < 30 {
+		if times < 120 {
 			fmt.Printf("clamD not running, waiting times [%v]\n", times)
 			time.Sleep(time.Second * 4)
 			waitForClamD(port, times+1)
