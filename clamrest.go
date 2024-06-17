@@ -41,7 +41,7 @@ func clamversion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	for version_string := range version {
 		if strings.HasPrefix(version_string.Raw, "ClamAV ") {
-			version_values := strings.Split(strings.Replace(version_string.Raw, "ClamAV ", "", 1),"/")
+			version_values := strings.Split(strings.Replace(version_string.Raw, "ClamAV ", "", 1), "/")
 			respJson := fmt.Sprintf("{ \"Clamav\": \"%s\" }", version_values[0])
 			if len(version_values) == 3 {
 				respJson = fmt.Sprintf("{ \"Clamav\": \"%s\", \"Signature\": \"%s\" , \"Signature_date\": \"%s\" }", version_values[0], version_values[1], version_values[2])
@@ -114,7 +114,7 @@ func scanPathHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(resJson))
 }
 
-//This is where the action happens.
+// This is where the action happens.
 func scanHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	//POST takes the uploaded file(s) and saves it to disk.
@@ -202,7 +202,10 @@ func scanHandlerBody(w http.ResponseWriter, r *http.Request) {
 
 func waitForClamD(port string, times int) {
 	clamdTest := clamd.NewClamd(port)
-	clamdTest.Ping()
+	pingErr := clamdTest.Ping()
+	if pingErr != nil {
+		fmt.Printf("clamD ping failed: %v. Address: %s", pingErr, port)
+	}
 	version, err := clamdTest.Version()
 
 	if err != nil {
@@ -250,7 +253,7 @@ func main() {
 	http.HandleFunc("/scan", scanHandler)
 	http.HandleFunc("/scanPath", scanPathHandler)
 	http.HandleFunc("/scanHandlerBody", scanHandlerBody)
-  	http.HandleFunc("/version", clamversion)
+	http.HandleFunc("/version", clamversion)
 	http.HandleFunc("/", home)
 
 	// Prometheus metrics
