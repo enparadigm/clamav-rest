@@ -204,12 +204,12 @@ func waitForClamD(port string, times int) {
 	clamdTest := clamd.NewClamd(port)
 	pingErr := clamdTest.Ping()
 	if pingErr != nil {
-		fmt.Printf("clamD ping failed: %v. Address: %s", pingErr, port)
+		fmt.Printf("clamD ping failed: %v. Address: %s\n", pingErr, port)
 	}
 	version, err := clamdTest.Version()
 
 	if err != nil {
-		if times < 120 {
+		if times < 600 {
 			fmt.Printf("clamD not running, waiting times [%v]\n", times)
 			time.Sleep(time.Second * 4)
 			waitForClamD(port, times+1)
